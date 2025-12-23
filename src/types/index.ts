@@ -14,6 +14,16 @@ export interface Category {
   id: string
   name: string
   icon?: string
+  image?: string
+  order: number
+}
+
+// Subcategory types
+export interface Subcategory {
+  id: string
+  name: string
+  category_id: string
+  image: string
   order: number
 }
 
@@ -25,6 +35,7 @@ export interface Product {
   price: number
   image: string
   category_id: string
+  subcategory_id: string
   featured: boolean
   popular: boolean
   badge?: string | null

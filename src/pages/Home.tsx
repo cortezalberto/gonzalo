@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, Suspense, lazy } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTableStore, useSession } from '../stores/tableStore'
 import { useProductTranslation } from '../hooks'
-import type { Category, Product } from '../types'
+import type { Category, Subcategory, Product } from '../types'
 
 // Components - eager loaded (critical path)
 import Header from '../components/Header'
@@ -11,6 +11,7 @@ import CategoryTabs from '../components/CategoryTabs'
 import BottomNav from '../components/BottomNav'
 import SectionErrorBoundary from '../components/ui/SectionErrorBoundary'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import SubcategoryGrid from '../components/SubcategoryGrid'
 
 // Components - lazy loaded (below fold / conditional)
 const PromoBanner = lazy(() => import('../components/PromoBanner'))
@@ -30,8 +31,10 @@ import {
   mockProducts,
   getRecommendedProducts,
   getFeaturedProducts,
-  getProductsByCategory,
-  getCategoryById
+  getSubcategoriesByCategory,
+  getProductsBySubcategory,
+  getCategoryById,
+  getSubcategoryById
 } from '../services/mockData'
 
 // React 19: Suspense fallback component
@@ -49,6 +52,7 @@ export default function Home() {
   const { t } = useTranslation()
   const { translateProducts } = useProductTranslation()
   const [activeCategory, setActiveCategory] = useState('0') // Default to 'Home'
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [showCloseTable, setShowCloseTable] = useState(false)
@@ -70,17 +74,30 @@ export default function Home() {
     [translateProducts]
   )
 
-  // Get products by selected category - translated
-  const categoryProducts = useMemo(() => {
-    if (activeCategory === '0') return [] // Home doesn't show category list
-    return translateProducts(getProductsByCategory(activeCategory))
-  }, [activeCategory, translateProducts])
+  // Get subcategories for selected category
+  const subcategories = useMemo(() => {
+    if (activeCategory === '0') return []
+    return getSubcategoriesByCategory(activeCategory)
+  }, [activeCategory])
+
+  // Get products by selected subcategory - translated
+  const subcategoryProducts = useMemo(() => {
+    if (!activeSubcategory) return []
+    return translateProducts(getProductsBySubcategory(activeSubcategory))
+  }, [activeSubcategory, translateProducts])
 
   // Get current category name
   const currentCategory = useMemo(() => getCategoryById(activeCategory), [activeCategory])
 
-  // Check if we're showing category list view
-  const isShowingCategoryList = activeCategory !== '0' && !searchQuery
+  // Get current subcategory
+  const currentSubcategory = useMemo(
+    () => (activeSubcategory ? getSubcategoryById(activeSubcategory) : null),
+    [activeSubcategory]
+  )
+
+  // Navigation state
+  const isShowingSubcategories = activeCategory !== '0' && !activeSubcategory && !searchQuery
+  const isShowingProducts = activeSubcategory !== null && !searchQuery
 
   // Filter products by search - translated
   const filteredProducts = useMemo(() => {
@@ -101,6 +118,20 @@ export default function Home() {
 
   const handleCategoryClick = useCallback((category: Category) => {
     setActiveCategory(category.id)
+    setActiveSubcategory(null) // Reset subcategory when changing category
+  }, [])
+
+  const handleSubcategoryClick = useCallback((subcategory: Subcategory) => {
+    setActiveSubcategory(subcategory.id)
+  }, [])
+
+  const handleBackFromSubcategory = useCallback(() => {
+    setActiveCategory('0')
+    setActiveSubcategory(null)
+  }, [])
+
+  const handleBackFromProducts = useCallback(() => {
+    setActiveSubcategory(null)
   }, [])
 
   const handleProductClick = useCallback((product: Product) => {
@@ -207,8 +238,8 @@ export default function Home() {
           <SearchBar onSearch={handleSearch} />
         </SectionErrorBoundary>
 
-        {/* Promo Banner - only on Home */}
-        {!searchQuery && !isShowingCategoryList && (
+        {/* Promo Banner - only on Home (not showing subcategories or products) */}
+        {!searchQuery && !isShowingSubcategories && !isShowingProducts && (
           <SectionErrorBoundary sectionName="Promoción">
             <Suspense fallback={<SectionLoader name="promoción" />}>
               <PromoBanner
@@ -222,17 +253,19 @@ export default function Home() {
           </SectionErrorBoundary>
         )}
 
-        {/* Category Tabs */}
-        <SectionErrorBoundary sectionName="Categorías">
-          <CategoryTabs
-            categories={mockCategories}
-            activeCategory={activeCategory}
-            onCategoryClick={handleCategoryClick}
-          />
-        </SectionErrorBoundary>
+        {/* Category Tabs - only on Home */}
+        {!isShowingSubcategories && !isShowingProducts && (
+          <SectionErrorBoundary sectionName="Categorías">
+            <CategoryTabs
+              categories={mockCategories}
+              activeCategory={activeCategory}
+              onCategoryClick={handleCategoryClick}
+            />
+          </SectionErrorBoundary>
+        )}
 
         {/* Featured Carousel - only on Home */}
-        {!searchQuery && !isShowingCategoryList && (
+        {!searchQuery && !isShowingSubcategories && !isShowingProducts && (
           <SectionErrorBoundary sectionName="Destacados">
             <Suspense fallback={<SectionLoader name="destacados" />}>
               <FeaturedCarousel
@@ -243,19 +276,54 @@ export default function Home() {
           </SectionErrorBoundary>
         )}
 
-        {/* Category Products List */}
-        {isShowingCategoryList && (
-          <section className="px-4 sm:px-6 md:px-8 lg:px-12">
+        {/* Subcategory Grid - when category is selected */}
+        {isShowingSubcategories && (
+          <SectionErrorBoundary sectionName="Subcategorías">
+            <SubcategoryGrid
+              subcategories={subcategories}
+              onSubcategoryClick={handleSubcategoryClick}
+              onBack={handleBackFromSubcategory}
+              categoryName={currentCategory?.name || ''}
+            />
+          </SectionErrorBoundary>
+        )}
+
+        {/* Products List - when subcategory is selected */}
+        {isShowingProducts && (
+          <section className="px-4 sm:px-6 md:px-8 lg:px-12 py-4">
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-4">
-                {currentCategory?.name ? t(currentCategory.name) : t('home.products')}
-              </h2>
+              {/* Header with back button */}
+              <div className="flex items-center gap-3 mb-6">
+                <button
+                  onClick={handleBackFromProducts}
+                  className="p-2 -ml-2 rounded-full hover:bg-dark-elevated transition-colors"
+                  aria-label={t('common.back')}
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 19.5L8.25 12l7.5-7.5"
+                    />
+                  </svg>
+                </button>
+                <h2 className="text-xl sm:text-2xl font-bold text-white">
+                  {currentSubcategory?.name ? t(currentSubcategory.name) : t('home.products')}
+                </h2>
+              </div>
 
               <SectionErrorBoundary sectionName="Productos">
                 <Suspense fallback={<SectionLoader name="productos" />}>
-                  {categoryProducts.length > 0 ? (
+                  {subcategoryProducts.length > 0 ? (
                     <div className="flex flex-col gap-3">
-                      {categoryProducts.map((product) => (
+                      {subcategoryProducts.map((product) => (
                         <ProductListItem
                           key={product.id}
                           product={product}

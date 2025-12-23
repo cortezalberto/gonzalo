@@ -29,18 +29,28 @@ No test framework is configured. Deployment: Vercel (configured via `vercel.json
 
 ## Architecture
 
+### Data Model
+
+Menu structure uses a three-level hierarchy:
+- **Categories** (Food, Drinks, Desserts) → **Subcategories** (Burgers, Pasta, Beer, etc.) → **Products**
+- Products link to subcategories via `subcategory_id` and categories via `category_id`
+- Navigation: Category tabs → Subcategory grid → Product list
+
 ### State Management
 
 Two Zustand stores with persistence:
 
 - **tableStore/** (modular) - Session, cart, orders, payment calculations. Uses localStorage with 8-hour expiry. No cross-store imports (auth context passed as parameter).
   - `store.ts` - Main Zustand store (uses helpers for calculations)
-  - `selectors.ts` - React hooks (`useSession`, `useCartItems`, `useDiners`, etc.)
+  - `selectors.ts` - React hooks with `useMemo` for derived values and `useShallow` for object selectors
   - `helpers.ts` - Pure utility functions (`calculatePaymentShares`, `withRetry`, `shouldExecute`)
   - `types.ts` - TypeScript interfaces
 - **authStore.ts** - Google OAuth state. Uses sessionStorage. `MOCK_MODE` auto-enabled in dev mode. Uses `AuthError` class with i18n keys for error messages.
 
-Both stores use selectors for optimized re-renders.
+**Critical Zustand patterns to avoid infinite re-renders:**
+- Selectors returning objects must use `useShallow` from `zustand/react/shallow`
+- Derived values (reduce, filter, map) must be computed with `useMemo` inside the hook, NOT inside the selector
+- See `useHeaderData`, `useSharedCartData`, `useOrderHistoryData` for correct patterns
 
 ### Key Patterns
 

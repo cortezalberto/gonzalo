@@ -202,6 +202,20 @@
     "starters": "Entradas",
     "mains": "Principais"
   },
+  "subcategories": {
+    "burgers": "Hambúrgueres",
+    "pasta": "Massas",
+    "salads": "Saladas",
+    "seafood": "Frutos do Mar",
+    "appetizers": "Entradas",
+    "beer": "Cervejas",
+    "cocktails": "Coquetéis",
+    "softDrinks": "Refrigerantes",
+    "wine": "Vinhos",
+    "cakes": "Bolos",
+    "iceCream": "Sorvetes",
+    "fruits": "Frutas"
+  },
   "ai": {
     "title": "Assistente barijho/",
     "subtitle": "Pergunte-me sobre o cardápio",
@@ -295,6 +309,7 @@
     "searchResults": "Resultados para \"{{query}}\"",
     "noProducts": "Nenhum produto encontrado",
     "noProductsInCategory": "Não há produtos nesta categoria",
+    "noSubcategories": "Nenhuma subcategoria disponível",
     "products": "Produtos",
     "viewPromos": "Ver promos",
     "recommended": "Recomendado para você",
@@ -360,6 +375,22 @@
     "10": {
       "name": "Sorvete",
       "description": "Seleção de três bolas"
+    },
+    "11": {
+      "name": "Hambúrguer BBQ",
+      "description": "Com bacon e molho barbecue"
+    },
+    "12": {
+      "name": "Mojito Clássico",
+      "description": "Rum, hortelã, limão e soda"
+    },
+    "13": {
+      "name": "Vinho Tinto Reserva",
+      "description": "Malbec argentino"
+    },
+    "14": {
+      "name": "Salada de Frutas",
+      "description": "Frutas frescas da estação"
     }
   },
   "badges": {

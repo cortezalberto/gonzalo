@@ -202,6 +202,20 @@
     "starters": "Starters",
     "mains": "Mains"
   },
+  "subcategories": {
+    "burgers": "Burgers",
+    "pasta": "Pasta",
+    "salads": "Salads",
+    "seafood": "Seafood",
+    "appetizers": "Appetizers",
+    "beer": "Beer",
+    "cocktails": "Cocktails",
+    "softDrinks": "Soft Drinks",
+    "wine": "Wine",
+    "cakes": "Cakes",
+    "iceCream": "Ice Cream",
+    "fruits": "Fruits"
+  },
   "ai": {
     "title": "barijho/ Assistant",
     "subtitle": "Ask me about the menu",
@@ -295,6 +309,7 @@
     "searchResults": "Results for \"{{query}}\"",
     "noProducts": "No products found",
     "noProductsInCategory": "No products in this category",
+    "noSubcategories": "No subcategories available",
     "products": "Products",
     "viewPromos": "View promos",
     "recommended": "Recommended for you",
@@ -360,6 +375,22 @@
     "10": {
       "name": "Ice Cream",
       "description": "Selection of three scoops"
+    },
+    "11": {
+      "name": "BBQ Burger",
+      "description": "With bacon and barbecue sauce"
+    },
+    "12": {
+      "name": "Classic Mojito",
+      "description": "Rum, mint, lime and soda"
+    },
+    "13": {
+      "name": "Red Wine Reserve",
+      "description": "Argentine Malbec"
+    },
+    "14": {
+      "name": "Fruit Salad",
+      "description": "Fresh seasonal fruits"
     }
   },
   "badges": {

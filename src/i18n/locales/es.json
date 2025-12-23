@@ -202,6 +202,20 @@
     "starters": "Entradas",
     "mains": "Principales"
   },
+  "subcategories": {
+    "burgers": "Hamburguesas",
+    "pasta": "Pastas",
+    "salads": "Ensaladas",
+    "seafood": "Mariscos",
+    "appetizers": "Entradas",
+    "beer": "Cervezas",
+    "cocktails": "Cócteles",
+    "softDrinks": "Refrescos",
+    "wine": "Vinos",
+    "cakes": "Tortas",
+    "iceCream": "Helados",
+    "fruits": "Frutas"
+  },
   "ai": {
     "title": "Asistente barijho/",
     "subtitle": "Preguntame sobre la carta",
@@ -295,6 +309,7 @@
     "searchResults": "Resultados para \"{{query}}\"",
     "noProducts": "No se encontraron productos",
     "noProductsInCategory": "No hay productos en esta categoría",
+    "noSubcategories": "No hay subcategorías disponibles",
     "products": "Productos",
     "viewPromos": "Ver promos",
     "recommended": "Recomendado para vos",
@@ -360,6 +375,22 @@
     "10": {
       "name": "Helado",
       "description": "Selección de tres bochas"
+    },
+    "11": {
+      "name": "Hamburguesa BBQ",
+      "description": "Con bacon y salsa barbacoa"
+    },
+    "12": {
+      "name": "Mojito Clásico",
+      "description": "Ron, menta, lima y soda"
+    },
+    "13": {
+      "name": "Vino Tinto Reserva",
+      "description": "Malbec argentino"
+    },
+    "14": {
+      "name": "Ensalada de Frutas",
+      "description": "Frutas frescas de estación"
     }
   },
   "badges": {
